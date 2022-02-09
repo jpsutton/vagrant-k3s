@@ -7,12 +7,14 @@ rm -rf /var/lib/rancher
 mkdir -p /etc/rancher/k3s
 echo "token: \"$token\"\nserver: \"https://$first_node_ip:6443\"" > /etc/rancher/k3s/config.yaml
 systemctl start k3s
+echo "Waiting for pods to stabilize..."
 
 # Wait until all pods have been created
 while [ $? -eq 0 ]; do
-  kubectl get pods -A | grep ContainerCreating
+  sleep 1s
+  kubectl get pods -A | grep ContainerCreating > /dev/null
 done
 
-echo Node has stabilizedf
+echo Node has stabilized
 
 exit 0

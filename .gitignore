@@ -1,2 +1,4 @@
 id_rsa.pub
 token.txt
+.vagrant
+.hostkey-cache

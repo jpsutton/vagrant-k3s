@@ -4,7 +4,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 require 'ipaddr'
 
 number_of_server_nodes  = 3
-number_of_agent_nodes   = 6
+number_of_agent_nodes   = 2
 first_server_node_ip    = '10.11.0.101'
 first_agent_node_ip     = '10.11.0.201'
 
@@ -41,9 +41,8 @@ Vagrant.configure(2) do |config|
       end
 
       # Setup SSH key for authentication
-      config.vm.provision "file", source: "id_rsa.pub", destination: "/home/vagrant/.ssh/authorized_keys"
-      config.vm.provision "shell", inline: "chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys"
-      config.vm.provision "shell", inline: "chmod 600 /home/vagrant/.ssh/authorized_keys"
+      config.vm.provision 'shell', path: 'setup-ssh-pubkey.sh'
+      config.vm.provision 'shell', path: 'preserve-ssh-hostkeys.sh'
 
       # First master node gets a different setup script than subsequent ones
       if n == 1
@@ -81,9 +80,10 @@ Vagrant.configure(2) do |config|
       end
 
       # Setup SSH key for authentication
-      config.vm.provision "file", source: "id_rsa.pub", destination: "/home/vagrant/.ssh/authorized_keys"
-      config.vm.provision "shell", inline: "chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys"
-      config.vm.provision "shell", inline: "chmod 600 /home/vagrant/.ssh/authorized_keys"
+      config.vm.provision 'shell', path: 'setup-ssh-pubkey.sh'
+      config.vm.provision 'shell', path: 'preserve-ssh-hostkeys.sh'
+
+      # Install k3s agent
       config.vm.provision 'shell', path: 'provision-agents.sh', args: [first_server_node_ip]
     end
   end
