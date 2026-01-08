@@ -1,9 +1,12 @@
 #!/bin/sh
 
+first_node_ip=${1}
 curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true sh -
 rm -rf /var/lib/rancher
 mkdir -p /etc/rancher/k3s
-echo "cluster-init: true" > /etc/rancher/k3s/config.yaml
+echo "cluster-init: true
+tls-san:
+  - \"${first_node_ip}\"" > /etc/rancher/k3s/config.yaml
 systemctl start k3s
 cat /var/lib/rancher/k3s/server/node-token
 echo Finished provisioning first master node

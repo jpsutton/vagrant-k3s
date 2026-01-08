@@ -46,7 +46,7 @@ Vagrant.configure(2) do |config|
 
       # First master node gets a different setup script than subsequent ones
       if n == 1
-        config.vm.provision 'shell', path: 'provision-first-master.sh'
+        config.vm.provision 'shell', path: 'provision-first-master.sh', args: [first_server_node_ip]
         config.vm.provision 'shell', inline: "cp -f /var/lib/rancher/k3s/server/node-token /vagrant/token.txt"
       else
         config.vm.provision 'shell', path: 'provision-other-masters.sh', args: [first_server_node_ip]
